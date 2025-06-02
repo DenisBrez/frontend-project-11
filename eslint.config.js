@@ -1,44 +1,29 @@
 /* eslint-disable */
-import globals from "globals";
-
-import path from "path";
-import { fileURLToPath } from "url";
-import { FlatCompat } from "@eslint/eslintrc";
-import pluginJs from "@eslint/js";
-import babelParser from "@babel/eslint-parser";
-
-// mimic CommonJS variables -- not needed if using CommonJS
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({baseDirectory: __dirname, recommendedConfig: pluginJs.configs.recommended});
+import pluginJs from '@eslint/js'
+import stylistic from '@stylistic/eslint-plugin'
+import globals from 'globals'
 
 export default [
+  stylistic.configs.recommended,
+  pluginJs.configs.recommended,
   {
-    ignores: ["dist/index.js", "eslint.config.js", "webpack.config.cjs"],
-  },
-  {
+    files: ['**/*.{js,mjs,cjs}'],
     languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
       globals: {
-        ...globals.browser, // Добавляем browser globals (document, window и т.д.)
-        ...globals.node
-      },
-      ecmaVersion: "latest",
-      sourceType: "module",
-      parser: babelParser,
-      parserOptions: {
-        requireConfigFile: false,
-        babelOptions: {
-          presets: ["@babel/preset-env"],
-        },
+        ...globals.browser,  // браузерные глобалы (document, window и др.)
+        ...globals.node,     // node globals
+        ...globals.jest,     // jest globals
+        DOMParser: 'readonly', // явно добавим DOMParser
       },
     },
-  },
-  ...compat.extends("airbnb"),
-  {
     rules: {
-      "import/extensions": ["error", "ignorePackages"],
-      "no-param-reassign": ["error", { "props": false }],
-      'no-console': 'off'
-    }
-  }
-];
+      'no-unused-vars': 'warn',
+      'no-console': 'off',
+    },
+  },
+  {
+    ignores: ['dist/'],
+  },
+]
