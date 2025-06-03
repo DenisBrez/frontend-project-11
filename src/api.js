@@ -17,7 +17,8 @@ const fetchRSS = (url) => {
       }
       return responce.data.contents
     })
-    .catch(() => {
+    .catch((err) => {
+      console.error('Ошибка при запросе RSS:', err)
       throw new Error('errors.network')
     })
 }

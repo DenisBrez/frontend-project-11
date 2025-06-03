@@ -12,10 +12,10 @@ export default [
       ecmaVersion: 'latest',
       sourceType: 'module',
       globals: {
-        ...globals.browser,  // браузерные глобалы (document, window и др.)
-        ...globals.node,     // node globals
-        ...globals.jest,     // jest globals
-        DOMParser: 'readonly', // явно добавим DOMParser
+        ...globals.browser,  
+        ...globals.node,     
+        ...globals.jest,    
+        DOMParser: 'readonly', 
       },
     },
     rules: {
