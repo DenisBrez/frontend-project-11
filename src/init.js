@@ -11,22 +11,22 @@ import parse from './parser.js'
 const app = () => {
   // Model (состояние)
   const state = {
-  form: {
-    inputValue: '',
-    status: 'filling', // 'filling', 'valid', 'invalid'
-    error: null,       // ошибки валидации формы
-  },
-  loadingProcess: {
-    status: 'idle',    // 'idle', 'sending', 'failed', 'success'
-    error: null,       // ошибки загрузки RSS
-  },
-  feeds: [],
-  posts: [],
-  uiState: {
-    modalPostId: null,
-    viewedPostsId: [],
-  },
-};
+    form: {
+      inputValue: '',
+      status: 'filling', // 'filling', 'valid', 'invalid'
+      error: null, // ошибки валидации формы
+    },
+    loadingProcess: {
+      status: 'idle', // 'idle', 'sending', 'failed', 'success'
+      error: null, // ошибки загрузки RSS
+    },
+    feeds: [],
+    posts: [],
+    uiState: {
+      modalPostId: null,
+      viewedPostsId: [],
+    },
+  }
 
   const elements = {
     form: document.querySelector('form'),
@@ -78,7 +78,7 @@ const app = () => {
             console.error(`Ошибка при получении данных из ${feed.id}:`, error)
           }))
         return Promise.all(promises)
-          .finally(() => {setTimeout(() => updatePosts(watchedState), 5000)})
+          .finally(() => { setTimeout(() => updatePosts(watchedState), 5000) })
       }
 
       // View (представление)
@@ -121,22 +121,22 @@ const app = () => {
             }
           })
           .then((link) => {
-  watchedState.formState = 'sending'
-  return fetchRSS(link)
-    .then((xml) => {
-      const { feed, posts } = parse(xml)
-      const feedId = uniqueId()
-      watchedState.feeds.push({ ...feed, id: feedId, link: url })
-      const postsWithId = posts.map(post => ({ ...post, id: uniqueId(), feedId }))
-      watchedState.posts.unshift(...postsWithId)
-      watchedState.formState = 'valid'
-    })
-    .catch((error) => {
-      watchedState.error = error.message
-      watchedState.formState = 'invalid'
-      return null
-    })
-})
+            watchedState.formState = 'sending'
+            return fetchRSS(link)
+              .then((xml) => {
+                const { feed, posts } = parse(xml)
+                const feedId = uniqueId()
+                watchedState.feeds.push({ ...feed, id: feedId, link: url })
+                const postsWithId = posts.map(post => ({ ...post, id: uniqueId(), feedId }))
+                watchedState.posts.unshift(...postsWithId)
+                watchedState.formState = 'valid'
+              })
+              .catch((error) => {
+                watchedState.error = error.message
+                watchedState.formState = 'invalid'
+                return null
+              })
+          })
       })
 
       elements.posts.addEventListener('click', (e) => {
