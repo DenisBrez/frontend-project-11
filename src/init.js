@@ -1,4 +1,5 @@
 import './styles.scss'
+import 'bootstrap'
 import * as yup from 'yup'
 import onChange from 'on-change'
 import i18next from 'i18next'
