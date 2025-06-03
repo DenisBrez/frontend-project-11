@@ -5,4 +5,4 @@
 
 # RSS агрегатор / RSS Reader
 
-### Мой проект https://frontend-project-11-m497jwkmb-denisbrezs-projects.vercel.app
+### Мой проект https://frontend-project-11-rose-three.vercel.app/
