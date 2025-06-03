@@ -1,3 +1,3 @@
 import './styles.scss'
-import app from './index.js'
+import app from './init.js'
 app()
