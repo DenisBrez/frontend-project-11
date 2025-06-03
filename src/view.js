@@ -122,25 +122,32 @@ const renderPosts = (state, elements, i18n) => {
 
 // Отрисовка модального окна
 const renderModal = (state, elements) => {
-  elements.modalHeader.innerHTML = ''
-  elements.modalBody.innerHTML = ''
+  elements.modalHeader.innerHTML = '';
+  elements.modalBody.innerHTML = '';
 
-  const activePost = state.posts.filter(post => post.id === state.uiState.modalPostId)
-  const [{ description, title }] = activePost
+  const activePost = state.posts.find(post => post.id === state.uiState.modalPostId);
+  if (!activePost) return;
 
-  const h5 = document.createElement('h5')
-  h5.classList.add('modal-title')
-  h5.textContent = title
-  const closeButton = document.createElement('button')
-  closeButton.classList.add('btn-close', 'close')
-  closeButton.setAttribute('type', 'button')
-  closeButton.setAttribute('data-bs-dismiss', 'modal')
-  closeButton.setAttribute('aria-label', 'Close')
-  elements.modalBody.textContent = description
+  const { description, title } = activePost;
 
-  elements.modalHeader.append(h5)
-  elements.modalHeader.append(closeButton)
-}
+  const h5 = document.createElement('h5');
+  h5.classList.add('modal-title');
+  h5.textContent = title;
+
+  const closeButton = document.createElement('button');
+  closeButton.classList.add('btn-close');
+  closeButton.setAttribute('type', 'button');
+  closeButton.setAttribute('data-bs-dismiss', 'modal');
+  closeButton.setAttribute('aria-label', 'Close');
+
+  elements.modalHeader.append(h5);
+  elements.modalHeader.append(closeButton);
+  elements.modalBody.textContent = description;
+
+  const modalElement = document.querySelector('#modal');
+  const modal = new bootstrap.Modal(modalElement);
+  modal.show();
+};
 
 export default (path, state, elements, i18n) => {
   switch (path) {
