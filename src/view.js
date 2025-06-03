@@ -90,7 +90,14 @@ const renderPosts = (state, elements, i18n) => {
     const ul = document.createElement('ul')
     ul.classList.add('list-group', 'border-0', 'rounded-0')
     const li = document.createElement('li')
-    li.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-start', 'border-0', 'border-end-0')
+    li.classList.add(
+      'list-group-item',
+      'd-flex',
+      'justify-content-between',
+      'align-items-start',
+      'border-0',
+      'border-end-0',
+    )
     const a = document.createElement('a')
     a.setAttribute('href', link)
     a.setAttribute('data-id', id)
@@ -113,6 +120,12 @@ const renderPosts = (state, elements, i18n) => {
     button.classList.add('btn', 'btn-outline-primary', 'btn-sm')
     button.textContent = i18n.t('elements.button')
 
+    button.addEventListener('click', () => {
+      state.uiState.modalPostId = id
+
+      renderModal(state, elements)
+    })
+
     card.append(ul)
     ul.append(li)
     li.append(a)
@@ -122,32 +135,36 @@ const renderPosts = (state, elements, i18n) => {
 
 // Отрисовка модального окна
 const renderModal = (state, elements) => {
-  elements.modalHeader.innerHTML = '';
-  elements.modalBody.innerHTML = '';
+  const activePost = state.posts.find(post => post.id === state.uiState.modalPostId)
+  if (!activePost) return
 
-  const activePost = state.posts.find(post => post.id === state.uiState.modalPostId);
-  if (!activePost) return;
+  const { description, title, link } = activePost
 
-  const { description, title } = activePost;
+  elements.modalHeader.innerHTML = ''
+  elements.modalBody.innerHTML = ''
 
-  const h5 = document.createElement('h5');
-  h5.classList.add('modal-title');
-  h5.textContent = title;
+  const h5 = document.createElement('h5')
+  h5.classList.add('modal-title')
+  h5.textContent = title
 
-  const closeButton = document.createElement('button');
-  closeButton.classList.add('btn-close');
-  closeButton.setAttribute('type', 'button');
-  closeButton.setAttribute('data-bs-dismiss', 'modal');
-  closeButton.setAttribute('aria-label', 'Close');
+  const closeButton = document.createElement('button')
+  closeButton.classList.add('btn-close', 'close')
+  closeButton.setAttribute('type', 'button')
+  closeButton.setAttribute('data-bs-dismiss', 'modal')
+  closeButton.setAttribute('aria-label', 'Close')
 
-  elements.modalHeader.append(h5);
-  elements.modalHeader.append(closeButton);
-  elements.modalBody.textContent = description;
+  elements.modalBody.textContent = description
 
-  const modalElement = document.querySelector('#modal');
-  const modal = new bootstrap.Modal(modalElement);
-  modal.show();
-};
+  elements.modalHeader.append(h5)
+  elements.modalHeader.append(closeButton)
+
+  if (elements.modalFooter) {
+    const fullArticleLink = elements.modalFooter.querySelector('.full-article')
+    if (fullArticleLink) {
+      fullArticleLink.setAttribute('href', link)
+    }
+  }
+}
 
 export default (path, state, elements, i18n) => {
   switch (path) {
