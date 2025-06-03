@@ -13,7 +13,7 @@ const renderInput = (state, elements, i18n) => {
       elements.input.classList.remove('is-invalid')
       elements.feedback.classList.remove('text-danger')
       elements.feedback.classList.add('text-success')
-      elements.feedback.textContent = i18n.t('success')
+      elements.feedback.textContent = i18n.t('status.success') 
       break
     case 'invalid':
       elements.submit.disabled = false
