@@ -102,43 +102,42 @@ const app = () => {
 
       // Contoller (события)
       elements.form.addEventListener('submit', (e) => {
-        e.preventDefault()
-        watchedState.formState = 'filling'
-        const formData = new FormData(e.target)
-        const url = formData.get('url')
-        watchedState.inputValue = url
+  e.preventDefault()
+  watchedState.form.status = 'filling'
+  const formData = new FormData(e.target)
+  const url = formData.get('url')
+  watchedState.form.inputValue = url
 
-        const existingLinks = watchedState.feeds.map(feed => feed.link)
-        validateURL(url, existingLinks)
-          .then((error) => {
-            if (error) {
-              watchedState.error = error
-              watchedState.formState = 'invalid'
-              throw new Error(error)
-            }
-            else {
-              watchedState.error = null
-              return url
-            }
-          })
-          .then((link) => {
-            watchedState.formState = 'sending'
-            return fetchRSS(link)
-              .then((xml) => {
-                const { feed, posts } = parse(xml)
-                const feedId = uniqueId()
-                watchedState.feeds.push({ ...feed, id: feedId, link: url })
-                const postsWithId = posts.map(post => ({ ...post, id: uniqueId(), feedId }))
-                watchedState.posts.unshift(...postsWithId)
-                watchedState.formState = 'valid'
-              })
-              .catch((error) => {
-                watchedState.error = error.message
-                watchedState.formState = 'invalid'
-                return null
-              })
-          })
-      })
+  const existingLinks = watchedState.feeds.map(feed => feed.link)
+  validateURL(url, existingLinks)
+    .then((error) => {
+      if (error) {
+        watchedState.form.error = error
+        watchedState.form.status = 'invalid'
+        throw new Error(error)
+      } else {
+        watchedState.form.error = null
+        watchedState.form.status = 'valid'
+        watchedState.loadingProcess.status = 'sending'
+        return url
+      }
+    })
+    .then((link) => {
+      return fetchRSS(link)
+        .then((xml) => {
+          const { feed, posts } = parse(xml)
+          const feedId = uniqueId()
+          watchedState.feeds.push({ ...feed, id: feedId, link })
+          const postsWithId = posts.map(post => ({ ...post, id: uniqueId(), feedId }))
+          watchedState.posts.unshift(...postsWithId)
+          watchedState.loadingProcess.status = 'success'
+        })
+        .catch((error) => {
+          watchedState.loadingProcess.status = 'failed'
+          watchedState.loadingProcess.error = error.message
+        })
+    })
+})
 
       elements.posts.addEventListener('click', (e) => {
         if (e.target.classList.contains('btn-outline-primary')) {
